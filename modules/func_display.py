@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
+import ctypes as cty
 import math
 from modules import userParam as param
 
@@ -42,6 +43,7 @@ def Draw3DMeshGrid(fig, df):
         y=y,
         z=z,
         #colorbar_title='Color Scale',              # 컬러바 제목
+        showscale=False,                            # 컬러바 제거
         intensity=z,                                # 색상을 결정하는 값 (intensity)
         colorscale=param.DISPLAY_MESH_COLORMAP,     # jet 컬러맵 적용
         opacity=param.DISPLAY_MESH_ALPHA/100        # 투명도
@@ -210,8 +212,9 @@ def Draw3DFeedBinBoundDown(fig, dataBound, FeedBinSizeR, FeedBinSizeH):
         ))
     return fig
 
-# Graph Option
+# Graph Option1
 def Draw3DLayout(fig, title, XYRange, ZRange, figureHeight = 1000):
+     
     if(XYRange is None):
         fig.update_layout(
             title=title,
@@ -223,9 +226,10 @@ def Draw3DLayout(fig, title, XYRange, ZRange, figureHeight = 1000):
                     range=ZRange
                 ),
             ),
-            height = figureHeight
+            height = figureHeight,
+            width = 800
         )
-    else:
+    else: 
         fig.update_layout(
             title=title,
             scene=dict(
@@ -242,13 +246,16 @@ def Draw3DLayout(fig, title, XYRange, ZRange, figureHeight = 1000):
                     range=ZRange
                 ),
             ),
-            height = figureHeight
+            height = figureHeight,
+            width = 800
         )
     return fig
 
-# Graph Option
-def Draw3DLayout(fig, title, XYRange, ZRange, height = 1000):
+# Graph Option2
+def Draw3DLayout(fig, title, XYRange, ZRange, height = 600):
+     
     if(XYRange is None):
+         
         fig.update_layout(            
             title=title,            
             scene=dict(                
@@ -259,9 +266,11 @@ def Draw3DLayout(fig, title, XYRange, ZRange, height = 1000):
                     range=ZRange                
                 ),            
             ),
-            height = height
+            height = height,
+            width = 800
         )
     else:
+         
         fig.update_layout(            
             title=title,            
             scene=dict(                
@@ -278,8 +287,10 @@ def Draw3DLayout(fig, title, XYRange, ZRange, height = 1000):
                     range=ZRange                
                 ),            
             ),
-            height = height   
-        )        
+            height = height,
+            width = 800  
+        )   
+        
     return fig
 
 

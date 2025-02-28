@@ -33,13 +33,38 @@ def MysqlGetDepthDataold(MYSQLconnect, date_start, date_end):
     return pd.read_sql_query(sql_state, MYSQLconnect)
 
 def MysqlGetDepthData(MYSQLconnect, date_start, date_end):
-    sql_state = "select T1.chk_date as date, T1.chg_volume as rawData, T1.chg_x as x, T1.chg_y as y, T1.chg_z as z, T1.std_volume, " \
-                " T1.std_amt, T1.stock_ratio, T1.stock_amt, T1.desc, T2.farm_nm, T3.bin_nm " \
+    sql_state = "select T1.chk_date as date, LEFT(T1.chk_date, 10) as fistdt,  SUBSTR(T1.chk_date, 12, 5) as lastdt, " \
+                " T1.chg_volume as rawData, T1.chg_x as x, T1.chg_y as y, T1.chg_z as z, T1.std_volume, T1.std_amt, " \
+                " T1.stock_ratio, LPAD(CONCAT(FORMAT(ROUND(T1.stock_amt * 1000), 0), 'Kg'), 10, ' ') as stock_amt, T1.desc, T2.farm_nm, T3.bin_nm " \
                 " from tb_change_data T1, tb_farm T2, tb_feedbin T3 " \
                 " where  T1.chg_x !='' and T1.chk_date between '" + date_start + "' and '" + date_end + "' " \
                 " and T1.bin_seq = T3.bin_seq	AND T3.farm_seq = T2.farm_seq  order by T1.chk_date desc  LIMIT 50;"
     return pd.read_sql_query(sql_state, MYSQLconnect)
 
+### 피드빈 별 측정데이터 25.02.27   
+def MysqlGetFeedbinData(MYSQLconnect, date_start, date_end, feedchecker):
+    sql_state = "select T1.chk_date as date, LEFT(T1.chk_date, 10) as fistdt,  SUBSTR(T1.chk_date, 12, 5) as lastdt, " \
+                " T1.chg_volume as rawData, T1.chg_x as x, T1.chg_y as y, T1.chg_z as z, T1.std_volume, T1.std_amt, " \
+                " T1.stock_ratio, LPAD(CONCAT(FORMAT(ROUND(T1.stock_amt * 1000), 0), 'Kg'), 10, ' ') as stock_amt, T1.desc, T2.farm_nm, T3.bin_nm " \
+                " from tb_change_data T1, tb_farm T2, tb_feedbin T3 " \
+                " where  T1.chg_x !='' and T1.chk_date between '" + date_start + "' and '" + date_end + "' " \
+                " and T3.bin_seq = '" + feedchecker + "' and T3.bin_seq = T1.bin_seq " \
+                " and T3.farm_seq = T2.farm_seq  order by T1.chk_date desc  LIMIT 50;"
+    return pd.read_sql_query(sql_state, MYSQLconnect)
+
+
+### 상단에 보여주는 최종 피드빈 별 측정데이터 25.02.26   
+def MysqlGetLastFeedbinData(MYSQLconnect, date_start, date_end, feedchecker):
+    sql_state = "select T1.chk_date as date, LEFT(T1.chk_date, 10) as fistdt,  SUBSTR(T1.chk_date, 12, 5) as lastdt, " \
+                " T2.farm_nm, T4.user_nm, T1.stock_ratio, T3.bin_nm, " \
+                " LPAD(CONCAT(FORMAT(ROUND(T1.stock_amt * 1000), 0), 'Kg'), 10, ' ') as stock_amt " \
+                " from tb_change_data T1, tb_farm T2, tb_feedbin T3, tb_user T4 " \
+                " where  T1.chg_x !='' and T1.chk_date between '" + date_start + "' and '" + date_end + "' " \
+                " and T3.bin_seq = '" + feedchecker + "' and T3.bin_seq = T1.bin_seq  and T3.user_seq = T4.user_seq " \
+                " and T3.farm_seq = T2.farm_seq  order by T1.chk_date desc  LIMIT 1;"
+    return pd.read_sql_query(sql_state, MYSQLconnect)
+
+ 
 def MysqlGetSizeFeedBin(MYSQLconnect):
     sql_state = "SELECT bin_serial_no as FeedBinSerialNo,bin_volume, top_diameter1 as top1, top_diameter2 as top2, top_height as top_H, " \
                 "mid_diameter1 as mid1, mid_diameter2 as mid2, mid_height as mid_H, " \
